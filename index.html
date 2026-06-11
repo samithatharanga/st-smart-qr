@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ST Imagix Smart QR v2 — Mobile Optimized Enterprise QR Suite</title>
+    <meta name="description" content="Premium Mobile-Responsive QR Code Generator v2  by ST Imagix. Multi-mode, custom frames, and enterprise export (PNG/SVG/PDF). 100% Serverless & Private.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: true,
+            },
+            theme: {
+                extend: {
+                    colors: {
+                        'cyber': '#00f3ff',
+                        'cyber-dark': '#00a8b3',
+                        'matrix': '#0D1117',
+                        'matrix-card': '#161B22',
+                        'matrix-border': '#30363d'
+                    },
+                    fontFamily: {
+                        'outfit': ['Outfit', 'sans-serif'],
+                        'mono': ['Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0D1117 0%, #161B22 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.15), inset 0 0 20px rgba(0, 243, 255, 0.03);
+        }
+
+        .neon-text {
+            color: #00f3ff;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+        }
+
+        .smooth-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-button {
+            padding: 10px 18px;
+            background: #1f2937;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #8b949e;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        @media (min-width: 640px) {
+            .tab-button {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+        }
+
+        .tab-button.active {
+            background: #00f3ff;
+            color: #0D1117;
+            border-color: #00f3ff;
+        }
+
+        input[type="text"],
+        input[type="url"],
+        input[type="number"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 12px;
+            background: #0D1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+            font-family: 'Outfit', sans-serif;
+            transition: 0.3s;
+            font-size: 16px; /* Prevents iOS auto-zoom on focus */
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #00f3ff;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        select {
+            cursor: pointer;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="white"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 20px;
+            padding-right: 40px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #00f3ff;
+            color: #0D1117;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            transition: 0.2s;
+            margin-top: 16px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 243, 255, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            padding: 12px 16px;
+            background: transparent;
+            border: 1.5px solid #00f3ff;
+            color: #00f3ff;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(0, 243, 255, 0.1);
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.3;
+            border-color: #30363d;
+            color: #8b949e;
+            cursor: not-allowed;
+        }
+
+        #qr-preview {
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0D1117;
+            border: 1px dashed #30363d;
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+        }
+
+        #qr-preview img {
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+            border-radius: 6px;
+        }
+
+        .color-picker-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        input[type="color"] {
+            width: 45px;
+            height: 45px;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            cursor: pointer;
+            background: none;
+        }
+
+        .export-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 16px;
+            width: 100%;
+        }
+
+        .spinner {
+            border: 2px solid rgba(0, 243, 255, 0.2);
+            border-top: 2px solid #00f3ff;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.25s ease-out;
+        }
+    </style>
+</head>
+<body class="font-outfit">
+
+    <div class="min-h-screen flex flex-col items-center justify-center p-3 sm:p-6 pb-12">
+        
+        <div class="mb-6 sm:mb-8 text-center fade-in px-2">
+            <h1 class="text-3xl sm:text-5xl font-bold mb-1">
+                <span class="neon-text">ST Imagix</span> QR v2
+            </h1>
+            <p class="text-gray-400 text-base sm:text-lg">Enterprise Serverless QR Code Suite</p>
+            <p class="text-cyan-500 text-xs sm:text-sm mt-2 font-mono tracking-wide">🔐 100% Private • 🚀 Mobile Responsive</p>
+        </div>
+
+        <div class="w-full max-w-6xl bg-matrix-card border border-matrix-border rounded-2xl shadow-2xl neon-glow overflow-hidden">
+            
+            <div class="border-b border-matrix-border p-3 sm:p-6 flex gap-2 overflow-x-auto justify-start sm:justify-start scrollbar-none">
+                <button class="tab-button active whitespace-nowrap" data-tab="url">
+                    <i class="fas fa-link mr-1.5"></i>URL / Text
+                </button>
+                <button class="tab-button whitespace-nowrap" data-tab="whatsapp">
+                    <i class="fab fa-whatsapp mr-1.5"></i>WhatsApp
+                </button>
+                <button class="tab-button whitespace-nowrap" data-tab="wifi">
+                    <i class="fas fa-wifi mr-1.5"></i>WiFi Net
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4 sm:p-8">
+                
+                <div class="space-y-5">
+                    
+                    <div id="tab-url" class="tab-content fade-in space-y-3">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-200">URL or Text Input</h3>
+                        <div>
+                            <label class="block text-gray-400 text-xs sm:text-sm mb-1.5 font-medium">Enter URL or Text</label>
+                            <input type="text" id="url-input" placeholder="https://yoursite.com or Any Text" />
+                        </div>
+                    </div>
+
+                    <div id="tab-whatsapp" class="tab-content hidden space-y-3">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-200">WhatsApp Chat Generator</h3>
+                        <div>
+                            <label class="block text-gray-400 text-xs sm:text-sm mb-1.5 font-medium">Phone Number (with country code)</label>
+                            <input type="text" id="whatsapp-phone" placeholder="+94771234567" />
+                            <p class="text-gray-500 text-[11px] mt-1">Include country code without spaces (e.g., +9477xxxxxxx)</p>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs sm:text-sm mb-1.5 font-medium">Pre-filled Message (optional)</label>
+                            <textarea id="whatsapp-message" placeholder="Hello! I'd like to connect..." class="w-full p-3 bg-matrix rounded-lg border border-matrix-border text-white outline-none focus:border-cyan-500 transition resize-none h-20 text-[16px]"></textarea>
+                        </div>
+                    </div>
+
+                    <div id="tab-wifi" class="tab-content hidden space-y-3">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-200">WiFi Network Setup</h3>
+                        <div>
+                            <label class="block text-gray-400 text-xs sm:text-sm mb-1.5 font-medium">Network Name (SSID)</label>
+                            <input type="text" id="wifi-ssid" placeholder="MyNetwork" />
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs sm:text-sm mb-1.5 font-medium">Password</label>
+                            <input type="password" id="wifi-password" placeholder="••••••••" />
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs sm:text-sm mb-1.5 font-medium">Security Type</label>
+                            <select id="wifi-security">
+                                <option value="WPA">WPA / WPA2</option>
+                                <option value="WEP">WEP</option>
+                                <option value="nopass">No Password (Open)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-matrix-border pt-4">
+                        <h3 class="text-base sm:text-lg font-bold text-gray-200 mb-3">QR Customization</h3>
+                        
+                        <div>
+                            <label class="block text-gray-400 text-xs sm:text-sm mb-2 font-medium">QR Code Color</label>
+                            <div class="color-picker-container">
+                                <input type="color" id="qr-color" value="#000000" />
+                                <span id="color-code" class="text-gray-400 text-sm font-mono">#000000</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                                <input type="checkbox" id="frame-toggle" class="w-4 h-4 sm:w-5 sm:h-5 accent-cyan-500" />
+                                <span class="text-gray-300 text-sm sm:text-base font-medium">Add Frame & Badge</span>
+                            </label>
+                        </div>
+
+                        <div id="frame-settings" class="hidden mt-3 space-y-3 p-3 bg-matrix rounded-lg border border-matrix-border fade-in">
+                            <div>
+                                <label class="block text-gray-400 text-xs mb-1 font-medium">Frame Style</label>
+                                <select id="frame-style">
+                                    <option value="elegant">Elegant Border Frame</option>
+                                    <option value="minimal">Minimal Frame</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 text-xs mb-1 font-medium">Badge Text (e.g., "SCAN ME")</label>
+                                <input type="text" id="badge-text" placeholder="SCAN ME / ඇණවුම් කරන්න" />
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 text-xs mb-1 font-medium">Background Color</label>
+                                <input type="color" id="badge-bg-color" value="#ffffff" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" onclick="generateQR()">
+                        <i class="fas fa-magic mr-1.5"></i> Generate QR Code
+                    </button>
+
+                </div>
+
+                <div class="space-y-4 flex flex-col justify-start">
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-200">Live Preview</h3>
+                    
+                    <div id="qr-preview" class="neon-glow rounded-xl">
+                        <div class="text-center text-gray-500 py-6">
+                            <i class="fas fa-qrcode text-4xl mb-2 opacity-30 block"></i>
+                            <p class="text-sm">Your QR code will appear here</p>
+                        </div>
+                    </div>
+
+                    <canvas id="qr-canvas" style="display: none;"></canvas>
+
+                    <div class="pt-2">
+                        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Enterprise Export</h3>
+                        <div class="export-grid">
+                            <button class="btn-secondary" onclick="downloadPNG()" disabled id="export-png">
+                                <i class="fas fa-download mr-1"></i> PNG
+                            </button>
+                            <button class="btn-secondary" onclick="downloadSVG()" disabled id="export-svg">
+                                <i class="fas fa-vector-square mr-1"></i> SVG
+                            </button>
+                            <button class="btn-secondary" onclick="downloadPDF()" disabled id="export-pdf">
+                                <i class="fas fa-file-pdf mr-1"></i> PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="status-message" class="p-3 rounded-lg bg-matrix border border-matrix-border text-gray-400 text-xs sm:text-sm text-center hidden smooth-transition">
+                        <span id="status-text"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center text-gray-500 text-xs font-mono px-4">
+            <p>🚀 ST Imagix Innovation — 100% Serverless & Private Framework</p>
+            <p class="mt-1 text-gray-600">No backend required • Open source portfolio</p>
+        </div>
+
+    </div>
+
+    <script>
+        // GLOBAL APPLICATION STATE
+        let currentTab = 'url';
+        let lastQRText = '';
+
+        // TAB ACTIONS MANAGEMENT
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tab = button.dataset.tab;
+                
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+                
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                    content.classList.remove('fade-in');
+                });
+                document.getElementById(`tab-${tab}`).classList.remove('hidden');
+                document.getElementById(`tab-${tab}`).classList.add('fade-in');
+                
+                currentTab = tab;
+                resetPreview();
+            });
+        });
+
+        // FORM CONTROLS BINDINGS
+        document.getElementById('frame-toggle').addEventListener('change', (e) => {
+            document.getElementById('frame-settings').classList.toggle('hidden', !e.target.checked);
+        });
+
+        document.getElementById('qr-color').addEventListener('change', (e) => {
+            document.getElementById('color-code').textContent = e.target.value.toUpperCase();
+        });
+
+        // CORE GENERATION INTERCEPTOR
+        function generateQR() {
+            let qrText = '';
+
+            if (currentTab === 'url') {
+                qrText = document.getElementById('url-input').value.trim();
+                if (!qrText) {
+                    showStatus('⚠️ Please enter a URL or text', 'error');
+                    return;
+                }
+            } 
+            else if (currentTab === 'whatsapp') {
+                const phone = document.getElementById('whatsapp-phone').value.trim();
+                const message = document.getElementById('whatsapp-message').value.trim();
+                
+                if (!phone) {
+                    showStatus('⚠️ Please enter a phone number', 'error');
+                    return;
+                }
+
+                if (!phone.match(/^\+?[0-9]{6,15}$/)) {
+                    showStatus('⚠️ Invalid phone format. Include country code.', 'error');
+                    return;
+                }
+
+                qrText = `https://wa.me/${phone.replace(/[^\d]/g, '')}${message ? '?text=' + encodeURIComponent(message) : ''}`;
+            } 
+            else if (currentTab === 'wifi') {
+                const ssid = document.getElementById('wifi-ssid').value.trim();
+                const password = document.getElementById('wifi-password').value.trim();
+                const security = document.getElementById('wifi-security').value;
+
+                if (!ssid) {
+                    showStatus('⚠️ Please enter a network name (SSID)', 'error');
+                    return;
+                }
+
+                if (security !== 'nopass' && !password) {
+                    showStatus('⚠️ Please enter a password', 'error');
+                    return;
+                }
+
+                qrText = `WIFI:S:${ssid};T:${security};P:${password};;`;
+            }
+
+            if (!qrText) {
+                showStatus('⚠️ Invalid input template setup', 'error');
+                return;
+            }
+
+            lastQRText = qrText;
+            renderQRCode();
+            enableExportButtons();
+            showStatus('✓ QR Code generated successfully', 'success');
+        }
+
+        // COMPOSITE RENDERING PIPELINE (MOBILE OPTIMIZED RENDERING)
+        function renderQRCode() {
+            const preview = document.getElementById('qr-preview');
+            const frameEnabled = document.getElementById('frame-toggle').checked;
+            const qrColor = document.getElementById('qr-color').value;
+            const frameStyle = document.getElementById('frame-style').value;
+            const badgeText = document.getElementById('badge-text').value.trim();
+            const badgeBgColor = document.getElementById('badge-bg-color').value;
+
+            preview.innerHTML = '';
+
+            if (frameEnabled) {
+                const canvas = document.getElementById('qr-canvas');
+                canvas.width = 300;
+                canvas.height = badgeText ? 380 : 300;
+
+                const ctx = canvas.getContext('2d');
+                const padding = 20;
+                const qrSize = 260;
+
+                ctx.fillStyle = badgeBgColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                if (frameStyle === 'elegant') {
+                    ctx.strokeStyle = qrColor;
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(padding, padding);
+                    ctx.lineTo(canvas.width - padding, padding);
+                    ctx.lineTo(canvas.width - padding, padding + qrSize);
+                    ctx.lineTo(padding, padding + qrSize);
+                    ctx.closePath();
+                    ctx.stroke();
+
+                    ctx.fillStyle = qrColor;
+                    const cornerSize = 12;
+                    ctx.fillRect(padding - 2, padding - 2, cornerSize, cornerSize);
+                    ctx.fillRect(canvas.width - padding - cornerSize + 2, padding - 2, cornerSize, cornerSize);
+                } else if (frameStyle === 'minimal') {
+                    ctx.strokeStyle = qrColor;
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+                }
+
+                const tempDiv = document.createElement('div');
+                new QRCode(tempDiv, {
+                    text: lastQRText,
+                    width: qrSize,
+                    height: qrSize,
+                    colorDark: qrColor,
+                    colorLight: badgeBgColor,
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                setTimeout(() => {
+                    const qrImg = tempDiv.querySelector('img');
+                    if (qrImg) {
+                        const drawAndRender = () => {
+                            ctx.drawImage(qrImg, padding, padding, qrSize, qrSize);
+
+                            if (badgeText) {
+                                ctx.fillStyle = qrColor;
+                                ctx.font = 'bold 16px Outfit, sans-serif';
+                                ctx.textAlign = 'center';
+                                ctx.fillText(badgeText, canvas.width / 2, canvas.height - 15);
+                            }
+
+                            const img = new Image();
+                            img.src = canvas.toDataURL();
+                            preview.innerHTML = '';
+                            preview.appendChild(img);
+                        };
+
+                        if (qrImg.complete) {
+                            drawAndRender();
+                        } else {
+                            qrImg.onload = drawAndRender;
+                        }
+                    }
+                }, 100);
+
+            } else {
+                const div = document.createElement('div');
+                div.style.background = 'white';
+                div.style.padding = '20px';
+                div.style.borderRadius = '8px';
+
+                new QRCode(div, {
+                    text: lastQRText,
+                    width: 260,
+                    height: 260,
+                    colorDark: qrColor,
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                setTimeout(() => {
+                    const qrImg = div.querySelector('img');
+                    if (qrImg) {
+                        const container = document.createElement('div');
+                        container.style.background = 'white';
+                        container.style.padding = '20px';
+                        container.style.borderRadius = '8px';
+                        // Mobile response scaling fix mapping layouts
+                        qrImg.style.maxWidth = "100%";
+                        qrImg.style.height = "auto";
+                        container.appendChild(qrImg.cloneNode(true));
+                        preview.innerHTML = '';
+                        preview.appendChild(container);
+                    }
+                }, 100);
+            }
+        }
+
+        // ASSETS EXPORT INFRASTRUCTURE
+        function downloadPNG() {
+            const preview = document.getElementById('qr-preview');
+            if (!preview.querySelector('img')) {
+                showStatus('⚠️ Generate QR code first', 'error');
+                return;
+            }
+
+            showStatus('Generating PNG...', 'loading');
+
+            html2canvas(preview, { 
+                backgroundColor: null,
+                scale: 2,
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = `ST-SmartQR-${Date.now()}.png`;
+                link.click();
+                showStatus('✓ PNG downloaded successfully', 'success');
+            }).catch(() => {
+                showStatus('⚠️ Failed to generate PNG target configuration', 'error');
+            });
+        }
+
+        function downloadSVG() {
+            if (!lastQRText) {
+                showStatus('⚠️ Generate QR code first', 'error');
+                return;
+            }
+
+            showStatus('Generating SVG...', 'loading');
+            const frameEnabled = document.getElementById('frame-toggle').checked;
+            let canvasTarget = frameEnabled ? document.getElementById('qr-canvas') : document.querySelector('#qr-preview canvas') || document.getElementById('qr-canvas');
+
+            try {
+                const svgData = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${canvasTarget.width} ${canvasTarget.height}" width="${canvasTarget.width}" height="${canvasTarget.height}">
+                    <rect width="100%" height="100%" fill="white"/>
+                    <image href="${canvasTarget.toDataURL('image/png')}" x="0" y="0" width="${canvasTarget.width}" height="${canvasTarget.height}"/>
+                </svg>`;
+
+                const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(svgBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `ST-SmartQR-Vector-${Date.now()}.svg`;
+                link.click();
+                URL.revokeObjectURL(url);
+
+                showStatus('✓ SVG downloaded successfully', 'success');
+            } catch(e) {
+                showStatus('⚠️ SVG Export buffer mismatch, falling back to PNG', 'error');
+                downloadPNG();
+            }
+        }
+
+        function downloadPDF() {
+            if (!lastQRText) {
+                showStatus('⚠️ Generate QR code first', 'error');
+                return;
+            }
+
+            showStatus('Generating PDF Layout...', 'loading');
+            const preview = document.getElementById('qr-preview');
+
+            html2canvas(preview, { 
+                backgroundColor: '#ffffff',
+                scale: 2,
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 100;
+                const imgHeight = (canvas.height / canvas.width) * imgWidth;
+                const xPos = (210 - imgWidth) / 2;
+                const yPos = 50;
+
+                pdf.addImage(imgData, 'PNG', xPos, yPos, imgWidth, imgHeight);
+
+                pdf.setFont('Outfit', 'bold');
+                pdf.setFontSize(18);
+                pdf.text('ST Imagix Smart QR Suite', 105, 30, { align: 'center' });
+
+                pdf.setFontSize(10);
+                pdf.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 160, { align: 'center' });
+
+                pdf.save(`ST-SmartQR-Print-${Date.now()}.pdf`);
+                showStatus('✓ PDF print asset downloaded successfully', 'success');
+            }).catch((err) => {
+                showStatus('⚠️ Failed to compile PDF print layers', 'error');
+            });
+        }
+
+        // DEFENSIVE RUNTIME UI ACTIONS
+        function enableExportButtons() {
+            document.getElementById('export-png').disabled = false;
+            document.getElementById('export-svg').disabled = false;
+            document.getElementById('export-pdf').disabled = false;
+        }
+
+        function resetPreview() {
+            document.getElementById('qr-preview').innerHTML = `
+                <div class="text-center text-gray-500 py-6">
+                    <i class="fas fa-qrcode text-4xl mb-2 opacity-30 block"></i>
+                    <p class="text-sm">Your QR code will appear here</p>
+                </div>
+            `;
+            document.getElementById('export-png').disabled = true;
+            document.getElementById('export-svg').disabled = true;
+            document.getElementById('export-pdf').disabled = true;
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status-message');
+            const statusText = document.getElementById('status-text');
+
+            if (!statusEl || !statusText) return;
+
+            statusText.innerHTML = message;
+            statusEl.classList.remove('hidden');
+
+            if (type === 'error') {
+                statusEl.style.borderColor = '#ef4444';
+                statusEl.style.background = 'rgba(239, 68, 68, 0.1)';
+                statusEl.style.color = '#fca5a5';
+            } else if (type === 'success') {
+                statusEl.style.borderColor = '#10b981';
+                statusEl.style.background = 'rgba(16, 185, 129, 0.1)';
+                statusEl.style.color = '#86efac';
+            } else if (type === 'loading') {
+                statusEl.style.borderColor = '#00f3ff';
+                statusEl.style.background = 'rgba(0, 243, 255, 0.1)';
+                statusEl.style.color = '#67e8f9';
+                statusText.innerHTML = '<span class="spinner"></span>' + message;
+            } else {
+                statusEl.style.borderColor = '#30363d';
+                statusEl.style.background = 'rgba(48, 54, 61, 0.5)';
+                statusEl.style.color = '#8b949e';
+            }
+
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    statusEl.classList.add('hidden');
+                }, 3500);
+            }
+        }
+
+        resetPreview();
+    </script>
+</body>
+</html>
